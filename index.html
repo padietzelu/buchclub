@@ -57,6 +57,12 @@
         .hidden {
             display: none;
         }
+        #iframeContainer {
+            display: none; /* Initial versteckt */
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
     </style>
     <script>
         function toggleImpressum() {
@@ -80,8 +86,10 @@
             if (email === "msh.buchclub@gmx.de" && password === "msh.buchclub") {
                 alert("Willkommen, " + name + "! Du bist jetzt eingeloggt.");
                 
-                // Umleitung auf die angegebene URL
-                window.location.href = 'https://padietzelu.github.io/websitebuchclub/';
+                // Zeige das Iframe mit der Zielseite an
+                const iframe = document.getElementById('iframeContainer');
+                iframe.style.display = 'block';
+                iframe.src = 'https://padietzelu.github.io/websitebuchclub/'; // Lade die Seite in das Iframe
             } else {
                 alert("Ungültige E-Mail oder Passwort. Bitte versuche es erneut.");
             }
@@ -125,6 +133,9 @@
             </form>
         </section>
     </div>
+
+    <!-- Iframe für die Zielseite -->
+    <iframe id="iframeContainer"></iframe>
 
     <!-- Impressum (versteckt) -->
     <div class="container hidden" id="impressum">
