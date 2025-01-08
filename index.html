@@ -74,15 +74,16 @@
             event.preventDefault();  // Verhindert das Standardverhalten des Formulars
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value; // Neues Passwortfeld hinzufügen
 
-            // Simuliere den Login-Prozess
-            if (name && email) {
+            // Überprüfen, ob die eingegebenen Daten korrekt sind
+            if (email === "msh.buchclub@gmx.de" && password === "msh.buchclub") {
                 alert("Willkommen, " + name + "! Du bist jetzt eingeloggt.");
                 
-                // Umleitung auf eine neue Seite (zum Beispiel eine Willkommensseite)
-                window.location.href = 'welcome.html';  // Hier die URL der Zielseite angeben
+                // Umleitung auf die angegebene URL
+                window.location.href = 'https://padietzelu.github.io/websitebuchclub/';
             } else {
-                alert("Bitte fülle alle Felder aus.");
+                alert("Ungültige E-Mail oder Passwort. Bitte versuche es erneut.");
             }
         }
     </script>
@@ -118,6 +119,8 @@
                 <input type="text" id="name" name="name" required><br><br>
                 <label for="email">E-Mail:</label><br>
                 <input type="email" id="email" name="email" required><br><br>
+                <label for="password">Passwort:</label><br>
+                <input type="password" id="password" name="password" required><br><br>
                 <input type="submit" value="Registrieren">
             </form>
         </section>
