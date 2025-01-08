@@ -54,45 +54,139 @@
         footer a:hover {
             text-decoration: underline;
         }
-        .hidden {
-            display: none;
-        }
-        #iframeContainer {
-            display: none; /* Initial versteckt */
+        textarea, input[type="file"] {
             width: 100%;
-            height: 600px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #05066d;
+            color: white;
+            padding: 10px 15px;
             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #35408f;
+        }
+        .polaroid-container, .pdf-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .polaroid {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            padding: 10px;
+            text-align: center;
+        }
+        .polaroid img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .polaroid .caption {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #05066d;
+        }
+        .pdf-preview {
+            width: 100%;
+            max-width: 600px;  /* Breite der PDF-Vorschau verkleinert */
+            height: 400px;     /* Höhe der PDF-Vorschau verkleinert */
+            border: 2px solid #05066d;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background-color: white;
+            position: relative;
+        }
+        .pdf-preview embed {
+            width: 100%;
+            height: 100%;
+        }
+        .delete-cross {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .delete-cross:hover {
+            color: red;
         }
     </style>
     <script>
-        function toggleImpressum() {
-            const impressum = document.getElementById('impressum');
-            impressum.classList.toggle('hidden');
-        }
+        function handleFileUpload() {
+            const fileInput = document.getElementById('fileUpload');
+            const files = fileInput.files;
+            const polaroidContainer = document.getElementById('polaroidContainer');
+            const pdfContainer = document.getElementById('pdfContainer');
 
-        function toggleDatenschutzerklaerung() {
-            const datenschutz = document.getElementById('datenschutzerklaerung');
-            datenschutz.classList.toggle('hidden');
-        }
+            for (let file of files) {
+                const fileURL = URL.createObjectURL(file);
 
-        // Registrierung und Login simulieren
-        function handleRegistration(event) {
-            event.preventDefault();  // Verhindert das Standardverhalten des Formulars
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value; // Neues Passwortfeld hinzufügen
+                if (file.type.startsWith('image/')) {
+                    // Bild hochladen: Polaroid-Stil
+                    const polaroid = document.createElement('div');
+                    polaroid.className = 'polaroid';
 
-            // Überprüfen, ob die eingegebenen Daten korrekt sind
-            if (email === "msh.buchclub@gmx.de" && password === "msh.buchclub") {
-                alert("Willkommen, " + name + "! Du bist jetzt eingeloggt.");
-                
-                // Zeige das Iframe mit der Zielseite an
-                const iframe = document.getElementById('iframeContainer');
-                iframe.style.display = 'block';
-                iframe.src = 'https://padietzelu.github.io/websitebuchclub/'; // Lade die Seite in das Iframe
-            } else {
-                alert("Ungültige E-Mail oder Passwort. Bitte versuche es erneut.");
+                    const img = document.createElement('img');
+                    img.src = fileURL;
+                    img.alt = file.name;
+
+                    const caption = document.createElement('div');
+                    caption.className = 'caption';
+                    caption.textContent = file.name;
+
+                    polaroid.appendChild(img);
+                    polaroid.appendChild(caption);
+                    polaroidContainer.appendChild(polaroid);
+
+                } else if (file.type === 'application/pdf') {
+                    // PDF hochladen: Vorschau
+                    const pdfPreview = document.createElement('div');
+                    pdfPreview.className = 'pdf-preview';
+
+                    const embed = document.createElement('embed');
+                    embed.src = fileURL;
+                    embed.type = 'application/pdf';
+
+                    // Kreuz zum Schließen der PDF
+                    const deleteCross = document.createElement('div');
+                    deleteCross.className = 'delete-cross';
+                    deleteCross.textContent = '×';
+                    deleteCross.onclick = function() {
+                        // PDF entfernen
+                        pdfPreview.remove();
+                        URL.revokeObjectURL(fileURL); // URL freigeben
+                    };
+
+                    pdfPreview.appendChild(embed);
+                    pdfPreview.appendChild(deleteCross);
+                    pdfContainer.appendChild(pdfPreview);
+                } else {
+                    alert("Bitte wählen Sie eine gültige Bild- oder PDF-Datei aus.");
+                }
+
+                // URL freigeben, wenn das Bild/Datei nicht mehr verwendet wird
+                embed.onload = () => URL.revokeObjectURL(fileURL);
             }
+
+            // Input zurücksetzen
+            fileInput.value = '';
         }
     </script>
 </head>
@@ -113,60 +207,27 @@
                 Unser Ziel ist es, gemeinsam wissenschaftliche Fachliteratur, praxisnahe Bücher und relevante Romane zu lesen, um ein fundiertes Verständnis 
                 der komplexen Wechselwirkungen zwischen Körper und Psyche zu entwickeln. 
             </p>
-            <p>Egal, ob du Medizin, Psychologie, Sozialwissenschaften oder ein verwandtes Fach studierst – hier findest du eine Plattform, um dein Wissen zu vertiefen, dich mit Gleichgesinnten auszutauschen und wertvolle Impulse für Studium und Praxis zu sammeln.</p>
         </section>
     </div>
 
-    <!-- Anmeldung/Registrierung -->
+    <!-- Datei-Upload -->
     <div class="container">
         <section>
-            <h2>Anmeldung/Registrierung</h2>
-            <p>Werde Teil unseres Buchclubs! Registriere dich, um Zugang zu privaten Bereichen wie exklusiven Buchbesprechungen und Diskussionen zu erhalten:</p>
-            <form id="registrationForm" onsubmit="handleRegistration(event)">
-                <label for="name">Name:</label><br>
-                <input type="text" id="name" name="name" required><br><br>
-                <label for="email">E-Mail:</label><br>
-                <input type="email" id="email" name="email" required><br><br>
-                <label for="password">Passwort:</label><br>
-                <input type="password" id="password" name="password" required><br><br>
-                <input type="submit" value="Registrieren">
-            </form>
-        </section>
-    </div>
+            <h2>PDFs und Bilder hochladen</h2>
+            <input type="file" id="fileUpload" accept="image/*, application/pdf" multiple>
+            <button class="btn" onclick="handleFileUpload()">Hochladen</button>
 
-    <!-- Iframe für die Zielseite -->
-    <iframe id="iframeContainer"></iframe>
+            <!-- Container für die Polaroid-Bilder -->
+            <div class="polaroid-container" id="polaroidContainer"></div>
 
-    <!-- Impressum (versteckt) -->
-    <div class="container hidden" id="impressum">
-        <section>
-            <h2>Impressum</h2>
-            <p><strong>Verantwortlich für den Inhalt:</strong></p>
-            <p>MSH Buchclub<br>
-            Musterstraße 123<br>
-            12345 Musterstadt<br>
-            Deutschland</p>
-            <p><strong>Kontakt:</strong></p>
-            <p>E-Mail: info@mshbuchclub.de<br>
-            Telefon: +49 (0)123 456 789</p>
-            <p><strong>Haftungsausschluss:</strong></p>
-            <p>Alle Inhalte auf dieser Website wurden sorgfältig geprüft. Dennoch können wir keine Garantie für die Vollständigkeit, Richtigkeit und Aktualität der Informationen übernehmen. Für den Inhalt verlinkter Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
-        </section>
-    </div>
-
-    <!-- Datenschutzerklärung (versteckt) -->
-    <div class="container hidden" id="datenschutzerklaerung">
-        <section>
-            <h2>Datenschutzerklärung</h2>
-            <p><strong>Datenschutz:</strong></p>
-            <p>Der Schutz Ihrer persönlichen Daten ist uns wichtig. Diese Website speichert keine personenbezogenen Daten, außer Sie registrieren sich oder nehmen Kontakt mit uns auf. Die von Ihnen eingegebenen Daten werden ausschließlich für die Bearbeitung Ihrer Anfragen oder zur Verwaltung Ihres Nutzerkontos verwendet.</p>
+            <!-- Container für die PDF-Vorschau -->
+            <div class="pdf-container" id="pdfContainer"></div>
         </section>
     </div>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2024 MSH Buchclub | <a href="javascript:toggleImpressum()">Impressum</a> | <a href="javascript:toggleDatenschutzerklaerung()">Datenschutzerklärung</a></p>
+        <p>&copy; 2024 MSH Buchclub</p>
     </footer>
 
 </body>
-</html>
