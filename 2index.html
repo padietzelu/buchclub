@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -72,18 +71,17 @@
 
         // Registrierung und Login simulieren
         function handleRegistration(event) {
-            event.preventDefault();  // Verhindert das Standardverhalten des Formulars
-            const name = document.getElementById('name').value;
+            event.preventDefault(); // Verhindert das Standardverhalten des Formulars
+            
             const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-            // Simuliere den Login-Prozess
-            if (name && email) {
-                alert("Willkommen, " + name + "! Du bist jetzt eingeloggt.");
-                
-                // Umleitung auf eine neue Seite (zum Beispiel eine Willkommensseite)
-                window.location.href = 'welcome.html';  // Hier die URL der Zielseite angeben
+            // Überprüfung der Anmeldedaten
+            if (email === "msh.buchclub@gmx.de" && password === "msh.buchclub") {
+                alert("Anmeldung erfolgreich! Du wirst jetzt weitergeleitet.");
+                window.location.href = '2index.html'; // Weiterleitung zur neuen Seite
             } else {
-                alert("Bitte fülle alle Felder aus.");
+                alert("Ungültige Anmeldedaten. Bitte überprüfe deine Eingaben.");
             }
         }
     </script>
@@ -115,11 +113,11 @@
             <h2>Anmeldung/Registrierung</h2>
             <p>Werde Teil unseres Buchclubs! Registriere dich, um Zugang zu privaten Bereichen wie exklusiven Buchbesprechungen und Diskussionen zu erhalten:</p>
             <form id="registrationForm" onsubmit="handleRegistration(event)">
-                <label for="name">Name:</label><br>
-                <input type="text" id="name" name="name" required><br><br>
                 <label for="email">E-Mail:</label><br>
                 <input type="email" id="email" name="email" required><br><br>
-                <input type="submit" value="Registrieren">
+                <label for="password">Passwort:</label><br>
+                <input type="password" id="password" name="password" required><br><br>
+                <input type="submit" value="Anmelden">
             </form>
         </section>
     </div>
@@ -164,4 +162,3 @@
 
 </body>
 </html>
-```
